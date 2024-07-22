@@ -1,0 +1,78 @@
+https://www.hackster.io/akshayjoseph666/interface-i2c-16x2-lcd-with-arduino-uno-just-4-wires-273b24
+
+int sensorPin=A0;
+int sensorData;
+
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+
+//I2C pins declaration
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+
+void setup() 
+{
+Serial.begin(9600);   
+pinMode(sensorPin,INPUT);
+lcd.begin();
+lcd.backlight();
+lcd.clear();
+}
+
+void loop() 
+{
+  lcd.clear();//Clean the screen
+  lcd.setCursor(0,0); 
+  lcd.print(" Air ");
+  lcd.setCursor(1,4);
+  lcd.print(" Revitalizer ");
+  delay(500);
+
+  sensorData = analogRead(sensorPin); 
+  sensorData= sensorData/4.5;
+  
+  lcd.clear();//Clean the screen
+  lcd.setCursor(0,0); 
+  lcd.print(" Air Quality: ");
+  lcd.setCursor(0,15);
+  lcd.print(" Revitalizer ");
+  delay (500);
+
+  lcd.clear();
+  Serial.print("Air Quality:");
+  Serial.print(sensorData, DEC);               
+  Serial.println(" PPM");
+
+  if((sensorData>60)&&(sensorData<=120))
+  {
+  Serial.println("AQI Status : Moderate");
+  lcd.setCursor(0,0);
+  lcd.print("AQI: Moderate");
+  }
+    
+  else if((sensorData>120)&&(sensorData<=300))
+  {
+  Serial.println("AQI Status : Unhealthy to Breath");
+  lcd.setCursor(0,0);
+  lcd.print("AQI: Unhealthy");
+    }
+  else if((sensorData>300)&&(sensorData<=500))
+  {
+  Serial.println("AQI Status : Harmfull");
+  lcd.setCursor(0,0);
+  lcd.print("AQI: Harmful");
+  }
+  else if((sensorData>500))
+  {
+  Serial.println("AQI Status : Danger");
+  lcd.setCursor(0,0);
+  lcd.print("AQI: Danger");
+  }
+  else
+  {
+  Serial.println("AQI Status : Safe to Breath");
+  lcd.setCursor(0,0);
+  lcd.print("AQI: Safe");
+  }
+  delay(1000);    
+}
